@@ -6,6 +6,10 @@ Real historical retail transactions analyzed with Python and SQL, with an intera
 
 [Live dashboard](https://lacetears.github.io/it-career-portfolio/sales.html) · [Methodology and source](retail/README.md) · [SQL](retail/queries.sql)
 
+![Published browser demo](docs/screenshot.jpg)
+
+*Screenshot of the published interactive demo.*
+
 ## The question
 How do sales and credits vary by country and month, and how much does cleaning change the input? This project uses UCI's Online Retail dataset, not generated company revenue.
 
