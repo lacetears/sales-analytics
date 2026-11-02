@@ -1,0 +1,53 @@
+{
+  "input_rows": 1213,
+  "valid_rows": 1200,
+  "duplicate_rows": 10,
+  "rejected_rows": 3,
+  "rejects": [
+    {
+      "csv_row": 1212,
+      "reason": "Invalid numeric range",
+      "raw": {
+        "order_id": "BAD-001",
+        "order_date": "2025-01-13",
+        "region": " east ",
+        "product": "Laptop",
+        "quantity": "-2",
+        "unit_price_cents": "89900",
+        "unit_cost_cents": "64000",
+        "discount_pct": "0",
+        "status": "Completed"
+      }
+    },
+    {
+      "csv_row": 1213,
+      "reason": "Invalid isoformat string: 'not-a-date'",
+      "raw": {
+        "order_id": "BAD-002",
+        "order_date": "not-a-date",
+        "region": " east ",
+        "product": "Laptop",
+        "quantity": "2",
+        "unit_price_cents": "89900",
+        "unit_cost_cents": "64000",
+        "discount_pct": "0",
+        "status": "Completed"
+      }
+    },
+    {
+      "csv_row": 1214,
+      "reason": "Invalid region",
+      "raw": {
+        "order_id": "BAD-003",
+        "order_date": "2025-01-13",
+        "region": "",
+        "product": "Laptop",
+        "quantity": "2",
+        "unit_price_cents": "89900",
+        "unit_cost_cents": "64000",
+        "discount_pct": "0",
+        "status": "Completed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "monthly": [
+    {
+      "month": "2025-01",
+      "orders": 80,
+      "revenue_usd": 64982.05,
+      "gross_profit_usd": 20175.05
+    },
+    {
+      "month": "2025-02",
+      "orders": 90,
+      "revenue_usd": 84194.3,
+      "gross_profit_usd": 24444.3
+    },
+    {
+      "month": "2025-03",
+      "orders": 93,
+      "revenue_usd": 87014.0,
+      "gross_profit_usd": 25481.0
+    },
+    {
+      "month": "2025-04",
+      "orders": 86,
+      "revenue_usd": 91706.0,
+      "gross_profit_usd": 27568.0
+    },
+    {
+      "month": "2025-05",
+      "orders": 105,
+      "revenue_usd": 119119.7,
+      "gross_profit_usd": 33891.7
+    },
+    {
+      "month": "2025-06",
+      "orders": 90,
+      "revenue_usd": 86277.55,
+      "gross_profit_usd": 24869.55
+    },
+    {
+      "month": "2025-07",
+      "orders": 74,
+      "revenue_usd": 68052.4,
+      "gross_profit_usd": 21534.4
+    },
+    {
+      "month": "2025-08",
+      "orders": 81,
+      "revenue_usd": 69010.5,
+      "gross_profit_usd": 21492.5
+    },
+    {
+      "month": "2025-09",
+      "orders": 90,
+      "revenue_usd": 76325.85,
+      "gross_profit_usd": 22398.85
+    },
+    {
+      "month": "2025-10",
+      "orders": 88,
+      "revenue_usd": 83898.25,
+      "gross_profit_usd": 26016.25
+    },
+    {
+      "month": "2025-11",
+      "orders": 91,
+      "revenue_usd": 82273.55,
+      "gross_profit_usd": 25563.55
+    },
+    {
+      "month": "2025-12",
+      "orders": 99,
+      "revenue_usd": 101186.5,
+      "gross_profit_usd": 30523.5
+    }
+  ],
+  "products": [
+    {
+      "product": "Laptop",
+      "units": 798,
+      "revenue_usd": 673980.3,
+      "margin_pct": 24.22
+    },
+    {
+      "product": "Monitor",
+      "units": 771,
+      "revenue_usd": 180176.4,
+      "margin_pct": 33.67
+    },
+    {
+      "product": "Dock",
+      "units": 865,
+      "revenue_usd": 105270.45,
+      "margin_pct": 46.59
+    },
+    {
+      "product": "Keyboard",
+      "units": 844,
+      "revenue_usd": 54613.5,
+      "margin_pct": 56.73
+    }
+  ],
+  "regions": [
+    {
+      "region": "South",
+      "orders": 257,
+      "revenue_usd": 277945.75
+    },
+    {
+      "region": "West",
+      "orders": 286,
+      "revenue_usd": 261976.8
+    },
+    {
+      "region": "North",
+      "orders": 261,
+      "revenue_usd": 244020.1
+    },
+    {
+      "region": "East",
+      "orders": 263,
+      "revenue_usd": 230098.0
+    }
+  ]
+}

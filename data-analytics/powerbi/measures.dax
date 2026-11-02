@@ -1,0 +1,7 @@
+// Import output/clean_sales.csv as Sales; type the numeric fields as Whole Number.
+Net Revenue = DIVIDE(SUM(Sales[net_revenue_cents]), 100)
+Gross Profit = DIVIDE(SUM(Sales[gross_profit_cents]), 100)
+Gross Margin = DIVIDE([Gross Profit], [Net Revenue])
+Completed Orders = CALCULATE(COUNTROWS(Sales), Sales[status] = "Completed")
+Average Order Value = DIVIDE([Net Revenue], [Completed Orders])
+Return Rate = DIVIDE(CALCULATE(COUNTROWS(Sales), Sales[status] = "Returned"), COUNTROWS(Sales))
