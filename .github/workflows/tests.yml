@@ -5,11 +5,14 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
       - run: pip install -r requirements.txt
       - uses: actions/setup-node@v4
         with:
@@ -18,3 +21,5 @@ jobs:
       - run: python data-analytics/analyze.py
       - run: python -m pytest -q
       - run: node tests/test_dashboard.cjs
+      - run: node tests/test_retail_dashboard.cjs
+      - run: python retail/check_dashboard.py
