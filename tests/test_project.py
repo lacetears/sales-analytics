@@ -72,3 +72,45 @@ def test_pipeline_totals():
     assert round(sum(r["revenue_usd"] for r in result["monthly"]) * 100) == sum(
         int(r["net_revenue_cents"]) for r in rows
     )
+
+
+def test_conflicting_order_is_rejected():
+    good,rejects,dupes=analytics.clean([valid_row(),dict(valid_row(),quantity='3')])
+    assert len(good)==1 and dupes==0
+    assert rejects[0]['reason']=='Conflicting duplicate order id'
+
+
+@pytest.mark.parametrize('bad',[dict(valid_row(),region=None),dict(valid_row(),order_id=None),dict(valid_row(),extra='unexpected')])
+def test_malformed_csv(bad):
+    good,rejects,dupes=analytics.clean([bad])
+    assert not good and len(rejects)==1 and dupes==0
+
+
+def test_fresh_pipeline_reconciles(tmp_path,monkeypatch):
+    import shutil, csv
+    for name in ('queries.sql','dashboard.template.html'):
+        shutil.copy(ROOT/'data-analytics'/name,tmp_path/name)
+    shutil.copytree(ROOT/'data-analytics/data',tmp_path/'data')
+    monkeypatch.setattr(analytics,'BASE',tmp_path)
+    analytics.main()
+    result=json.loads((tmp_path/'output/query_results.json').read_text())
+    rows,_,_=analytics.clean(csv.DictReader((tmp_path/'data/raw_sales.csv').open()))
+    assert round(sum(r['revenue_usd'] for r in result['monthly'])*100)==sum(r['net_revenue_cents'] for r in rows)
+    assert sum(r['orders'] for r in result['monthly'])==sum(r['status']=='Completed' for r in rows)
+
+
+def test_date_normalized_before_sql_grouping():
+    rows,rejects,_=analytics.clean([dict(valid_row(),order_date='20250101')])
+    assert not rejects and rows[0]['order_date']=='2025-01-01'
+
+
+def test_no_completed_orders(tmp_path,monkeypatch):
+    import csv, shutil
+    for name in ('queries.sql','dashboard.template.html'):
+        shutil.copy(ROOT/'data-analytics'/name,tmp_path/name)
+    (tmp_path/'data').mkdir()
+    with (tmp_path/'data/raw_sales.csv').open('w') as stream:
+        writer=csv.DictWriter(stream,fieldnames=valid_row().keys());writer.writeheader();writer.writerow(dict(valid_row(),status='Returned'))
+    monkeypatch.setattr(analytics,'BASE',tmp_path)
+    analytics.main()
+    assert 'Highest-revenue product: None' in (tmp_path/'output/findings.md').read_text()

@@ -20,17 +20,19 @@ FIELDS = [
 
 
 def clean(rows):
-    seen = set()
+    seen = {}
     good = []
     rejects = []
     duplicates = 0
     for number, raw in enumerate(rows, 2):
-        row = dict(raw)
         try:
+            row = dict(raw)
+            if set(row) != set(FIELDS[:9]) or any(value is None for value in row.values()):
+                raise ValueError("Unexpected or missing CSV fields")
             row["order_id"] = row["order_id"].strip()
             if not row["order_id"]:
                 raise ValueError("Missing order id")
-            date.fromisoformat(row["order_date"])
+            row["order_date"] = date.fromisoformat(row["order_date"]).isoformat()
             row["region"] = row["region"].strip().title()
             if row["region"] not in ("North", "South", "East", "West"):
                 raise ValueError("Invalid region")
@@ -52,9 +54,11 @@ def clean(rows):
             ):
                 raise ValueError("Invalid numeric range")
             if row["order_id"] in seen:
+                if row != seen[row["order_id"]]:
+                    raise ValueError("Conflicting duplicate order id")
                 duplicates += 1
                 continue
-            seen.add(row["order_id"])
+            seen[row["order_id"]] = dict(row)
             amount = (
                 Decimal(row["quantity"] * row["unit_price_cents"])
                 * (100 - row["discount_pct"])
@@ -72,7 +76,7 @@ def clean(rows):
                 else 0
             )
             good.append(row)
-        except (ValueError, KeyError, TypeError) as error:
+        except (ValueError, KeyError, TypeError, AttributeError, ArithmeticError) as error:
             rejects.append(dict(csv_row=number, reason=str(error), raw=raw))
     return good, rejects, duplicates
 
@@ -84,7 +88,7 @@ def main():
         raw = list(csv.DictReader(f))
     rows, rejects, duplicates = clean(raw)
     with (out / "clean_sales.csv").open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDS)
+        writer = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     with sqlite3.connect(out / "sales.db") as db:
@@ -126,8 +130,8 @@ def main():
     )
     total = sum(r["net_revenue_cents"] for r in rows)
     profit = sum(r["gross_profit_cents"] for r in rows)
-    best = results[1][0]
-    month = max(results[0], key=lambda r: r["revenue_usd"])
+    best = results[1][0] if results[1] else {"product": "None", "revenue_usd": 0}
+    month = max(results[0], key=lambda r: r["revenue_usd"]) if results[0] else {"month": "None", "revenue_usd": 0}
     (out / "findings.md").write_text(
         f'# Sales findings\n\nSynthetic 2025 dataset, generated with seed 42. Not real company results.\n\n- {len(raw):,} input rows; {len(rows):,} valid orders; {duplicates} duplicates removed; {len(rejects)} rows rejected.\n- Recognized revenue: ${total/100:,.2f}. Gross profit: ${profit/100:,.2f}.\n- Highest-revenue product: {best["product"]}, ${best["revenue_usd"]:,.2f}.\n- Highest-revenue month: {month["month"]}, ${month["revenue_usd"]:,.2f}.\n\nInvestigate product mix and discounting by region before changing inventory. These descriptive results do not establish causes or predict demand. Gross profit excludes operating expenses, tax, shipping, and return-processing costs.\n'
     )
