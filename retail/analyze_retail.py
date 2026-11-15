@@ -25,7 +25,8 @@ def prepare(rows):
             continue
         seen.add(key)
         invoice, stock, description, quantity, when, price, customer, country = values
-        if not invoice or not stock or not isinstance(when, datetime) or not country:
+        if (any(value is None or not str(value).strip() for value in (invoice, stock, country))
+                or not isinstance(when, datetime)) :
             counts["invalid_identity_date_country"] += 1
             continue
         try:
