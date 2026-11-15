@@ -88,3 +88,14 @@ def test_script_injection_escaped(tmp_path):
     payload={'products':[{'description':'</script><script>alert(1)</script>'}], 'monthly_country':[]}
     output=tmp_path/'report.html';retail.render_dashboard(payload,output)
     assert '</script><script>alert(1)</script>' not in output.read_text()
+
+
+def test_whitespace_identities_rejected():
+    rows = []
+    for index in (0, 1, 7):
+        values = list(row())
+        values[index] = '  '
+        rows.append(tuple(values))
+    records, quality = retail.prepare(rows)
+    assert records == []
+    assert quality['invalid_identity_date_country'] == 3
